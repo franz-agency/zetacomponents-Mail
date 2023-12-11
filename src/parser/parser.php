@@ -95,9 +95,8 @@ class ezcMailParser
     /**
      * Holds the parser of the current mail.
      *
-     * @var ezcMailPartParser
      */
-    private $partParser = null;
+    private ?\ezcMailRfc822Parser $partParser = null;
 
     /**
      * Holds the directory where parsed mail should store temporary files.
@@ -109,9 +108,8 @@ class ezcMailParser
     /**
      * Holds options you can be set to the mail parser.
      *
-     * @var ezcMailParserOptions
      */
-    private $options;
+    private ?\ezcMailParserOptions $options = null;
 
     /**
      * Constructs a new mail parser.
@@ -124,7 +122,7 @@ class ezcMailParser
      *         if $options contains a property with a value not allowed
      * @param ezcMailParserOptions|array(string=>mixed) $options
      */
-    public function __construct( $options = array() )
+    public function __construct( $options = [] )
     {
         if ( $options instanceof ezcMailParserOptions )
         {
@@ -148,10 +146,9 @@ class ezcMailParser
      * @throws ezcBaseValueException
      *         if $value is not accepted for the property $name
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -178,14 +175,10 @@ class ezcMailParser
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'options':
-                return $this->options;
-            
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'options' => $this->options,
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -197,14 +190,10 @@ class ezcMailParser
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'options':
-                return true;
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'options' => true,
+            default => false,
+        };
     }
 
     /**
@@ -227,13 +216,12 @@ class ezcMailParser
      *
      * @throws ezcBaseFileNotFoundException
      *         if a neccessary temporary file could not be openened.
-     * @param ezcMailParserSet $set
      * @param string $class Deprecated. Use $mailClass in ezcMailParserOptions class instead.
      * @return array(ezcMail)
      */
     public function parseMail( ezcMailParserSet $set, $class = null )
     {
-        $mail = array();
+        $mail = [];
         if ( !$set->hasData() )
         {
             return $mail;

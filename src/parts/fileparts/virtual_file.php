@@ -65,9 +65,9 @@ class ezcMailVirtualFile extends ezcMailFilePart
             // get mime and content type
             $fileInfo = new finfo( FILEINFO_MIME );
             $mimeParts = $fileInfo->buffer( $contents );
-            if ( $mimeParts !== false && strpos( $mimeParts, '/' ) !== false )
+            if ( $mimeParts !== false && str_contains( $mimeParts, '/' ) )
             {
-                list( $this->contentType, $this->mimeType ) = explode( '/', $mimeParts );
+                [$this->contentType, $this->mimeType] = explode( '/', $mimeParts );
             }
             else
             {
@@ -117,15 +117,10 @@ class ezcMailVirtualFile extends ezcMailFilePart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'contents':
-                return $this->properties[$name];
-                break;
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            'contents' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -137,14 +132,10 @@ class ezcMailVirtualFile extends ezcMailFilePart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'contents':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'contents' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**

@@ -99,15 +99,10 @@ class ezcMailRfc822Digest extends ezcMailPart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'mail':
-                return $this->properties[$name];
-                break;
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            'mail' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -119,14 +114,10 @@ class ezcMailRfc822Digest extends ezcMailPart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'mail':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'mail' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**

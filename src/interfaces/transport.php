@@ -37,7 +37,6 @@ interface ezcMailTransport
     /**
      * Sends the contents of $mail.
      *
-     * @param ezcMail $mail
      */
     public function send( ezcMail $mail );
 }

@@ -49,30 +49,20 @@ class ezcMailMboxSet implements ezcMailParserSet
      * It is false if there is no mail being fetched currently or if all the data of the current mail
      * has been fetched.
      *
-     * @var bool
      */
-    private $hasMoreMailData = false;
+    private bool $hasMoreMailData = false;
 
     /**
      * Records whether we initialized the mbox or not
      *
-     * @var bool
      */
-    private $initialized = false;
-
-    /**
-     * Holds the current message positions.
-     *
-     * @var array(int=>int)
-     */
-    private $messagePositions = array();
+    private bool $initialized = false;
 
     /**
      * Holds the current message position in array $messagePositions.
      *
-     * @var int
      */
-    private $currentMessagePosition = 0;
+    private int $currentMessagePosition = 0;
 
     /**
      * Constructs a new mbox parser set.
@@ -82,7 +72,12 @@ class ezcMailMboxSet implements ezcMailParserSet
      * @param resource(filepointer) $fh
      * @param array(int=>int) $messages
      */
-    public function __construct( $fh, array $messages )
+    public function __construct( $fh, /**
+     * Holds the current message positions.
+     *
+     * @var array(int=>int)
+     */
+    private array $messagePositions )
     {
         if ( !is_resource( $fh ) || get_resource_type( $fh ) != 'stream' )
         {
@@ -91,7 +86,6 @@ class ezcMailMboxSet implements ezcMailParserSet
         $this->fh = $fh;
         $this->initialized = false;
         $this->hasMoreMailData = true;
-        $this->messagePositions = $messages;
         $this->currentMessagePosition = 0;
     }
 
@@ -123,7 +117,7 @@ class ezcMailMboxSet implements ezcMailParserSet
         if ( $this->hasMoreMailData )
         {
             $data = fgets( $this->fh );
-            if ( feof( $this->fh ) || substr( $data, 0, 5 ) === "From " )
+            if ( feof( $this->fh ) || str_starts_with($data, "From ") )
             {
                 $this->hasMoreMailData = false;
 

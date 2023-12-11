@@ -38,13 +38,6 @@
 class ezcMailImapSet implements ezcMailParserSet
 {
     /**
-     * Holds the list of messages that the user wants to retrieve from the server.
-     *
-     * @var array(int)
-     */
-    private $messages;
-
-    /**
      * Holds the current message the user is fetching.
      *
      * The variable is null before the first message and false after
@@ -67,37 +60,26 @@ class ezcMailImapSet implements ezcMailParserSet
      * It is false if there is no mail being fetched currently or if all the data of the current mail
      * has been fetched.
      *
-     * @var bool
      */
-    private $hasMoreMailData = false;
-
-    /**
-     * Holds if mail should be deleted from the server after retrieval.
-     *
-     * @var bool
-     */
-    private $deleteFromServer = false;
+    private bool $hasMoreMailData = false;
 
     /**
      * Used to generate a tag for sending commands to the IMAP server.
-     * 
-     * @var string
+     *
      */
-    private $currentTag = 'A0000';
+    private string $currentTag = 'A0000';
 
     /**
      * Holds the mode in which the IMAP commands operate.
      *
-     * @var string
      */
-    private $uid;
+    private readonly string $uid;
 
     /**
      * Holds the options for an IMAP mail set.
      *
-     * @var ezcMailImapSetOptions
      */
-    private $options;
+    private ?\ezcMailImapSetOptions $options = null;
 
     /**
      * Holds the number of bytes to read from the IMAP server.
@@ -111,9 +93,8 @@ class ezcMailImapSet implements ezcMailParserSet
      *
      * In this example, $this->bytesToRead will be set to 377.
      *
-     * @var int
      */
-    private $bytesToRead = false;
+    private bool|int $bytesToRead = false;
 
     /**
      * Constructs a new IMAP parser set that will fetch the messages $messages.
@@ -127,12 +108,20 @@ class ezcMailImapSet implements ezcMailParserSet
      *
      * @throws ezcMailTransportException
      *         if the server sent a negative response
-     * @param ezcMailTransportConnection $connection
      * @param array(int) $messages
      * @param bool $deleteFromServer
      * @param ezcMailImapSetOptions|array(string=>mixed) $options
      */
-    public function __construct( ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false, $options = array() )
+    public function __construct( ezcMailTransportConnection $connection, /**
+     * Holds the list of messages that the user wants to retrieve from the server.
+     *
+     * @var array(int)
+     */
+    private array $messages, /**
+     * Holds if mail should be deleted from the server after retrieval.
+     *
+     */
+    private $deleteFromServer = false, $options = [] )
     {
         if ( $options instanceof ezcMailImapSetOptions )
         {
@@ -148,8 +137,6 @@ class ezcMailImapSet implements ezcMailParserSet
         }
 
         $this->connection = $connection;
-        $this->messages = $messages;
-        $this->deleteFromServer = $deleteFromServer;
         $this->nextData = null;
         
         $this->uid = ( $this->options->uidReferencing ) ? ezcMailImapTransport::UID : ezcMailImapTransport::NO_UID;
@@ -187,7 +174,7 @@ class ezcMailImapSet implements ezcMailParserSet
             if ( $this->bytesToRead !== false && $this->bytesToRead >= 0 )
             {
                 $data = $this->connection->getLine();
-                $this->bytesToRead -= strlen( $data );
+                $this->bytesToRead -= strlen( (string) $data );
 
                 // modified for issue #13878 (Endless loop in ezcMailParser):
                 // removed wrong checks (ending in ')' check and ending with tag check (e.g. 'A0002'))
@@ -195,14 +182,14 @@ class ezcMailImapSet implements ezcMailParserSet
                 {
                     if ( $this->bytesToRead < 0 )
                     {
-                        $data = substr( $data, 0, strlen( $data ) + $this->bytesToRead ); //trim( $data, ")\r\n" );
+                        $data = substr( (string) $data, 0, strlen( (string) $data ) + $this->bytesToRead ); //trim( $data, ")\r\n" );
                     }
 
                     if ( $this->bytesToRead === 0 )
                     {
                         // hack for Microsoft Exchange, which sometimes puts
                         // FLAGS (\Seen)) at the end of a message instead of before (!)
-                        if ( strlen( trim( $data, ")\r\n" ) !== strlen( $data ) - 3 ) )
+                        if ( strlen( trim( (string) $data, ")\r\n" ) !== strlen( (string) $data ) - 3 ) )
                         {
                             // if the last line in a mail does not end with ")\r\n"
                             // then read an extra line and discard it
@@ -253,15 +240,15 @@ class ezcMailImapSet implements ezcMailParserSet
             $tag = $this->getNextTag();
             $this->connection->sendData( "{$tag} {$this->uid}FETCH {$this->currentMessage} RFC822" );
             $response = $this->connection->getLine();
-            if ( strpos( $response, ' NO ' ) !== false ||
-                 strpos( $response, ' BAD ') !== false )
+            if ( str_contains( (string) $response, ' NO ' ) ||
+                 str_contains( (string) $response, ' BAD ') )
             {
                 throw new ezcMailTransportException( "The IMAP server sent a negative reply when requesting mail." );
             }
             else
             {
                 $response = $this->getResponse( 'FETCH (', $response );
-                if ( strpos( $response, 'FETCH (' ) !== false )
+                if ( str_contains( $response, 'FETCH (' ) )
                 {
                     $this->hasMoreMailData = true;
                     // retrieve the message size from $response, eg. if $response is:
@@ -277,7 +264,7 @@ class ezcMailImapSet implements ezcMailParserSet
                 else
                 {
                     $response = $this->getResponse( $tag );
-                    if ( strpos( $response, 'OK ' ) === false )
+                    if ( !str_contains( $response, 'OK ' ) )
                     {
                         throw new ezcMailTransportException( "The IMAP server sent a negative reply when requesting mail." );
                     }
@@ -318,10 +305,10 @@ class ezcMailImapSet implements ezcMailParserSet
         {
             $response = $this->connection->getLine();
         }
-        while ( strpos( $response, $tag ) === false )
+        while ( !str_contains( (string) $response, $tag ) )
         {
-            if ( strpos( $response, ' BAD ' ) !== false ||
-                 strpos( $response, ' NO ' ) !== false )
+            if ( str_contains( (string) $response, ' BAD ' ) ||
+                 str_contains( (string) $response, ' NO ' ) )
             {
                 break;
             }

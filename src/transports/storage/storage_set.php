@@ -70,44 +70,33 @@ class ezcMailStorageSet implements ezcMailParserSet
      * Holds the temporary file name where contents are being initially written
      * (until set is parsed and Message-ID is extracted).
      *
-     * @var string
      */
-    private $file = null;
+    private ?string $file = null;
 
     /**
      * Holds the path where the files are written (specified in the constructor).
      *
-     * @var string
      */
-    private $path = null;
+    private ?string $path = null;
 
     /**
      * This variable is true if there is more data in the mail that is being fetched.
      *
-     * @var bool
      */
-    private $hasMoreMailData = false;
-
-    /**
-     * Holds the location where to store the message sources.
-     *
-     * @var string
-     */
-    private $location;
+    private bool $hasMoreMailData = false;
 
     /**
      * Holds the filenames holding the sources of the mails in this set.
      *
      * @var array(string)
      */
-    private $files = null;
+    private ?array $files = null;
 
     /**
      * Holds the current email number being parsed.
      *
-     * @var int
      */
-    private $counter;
+    private int $counter;
 
     /**
      * Constructs a new storage set around the provided set.
@@ -115,13 +104,15 @@ class ezcMailStorageSet implements ezcMailParserSet
      * $location specifies where to save the message sources. This directory MUST
      * exist and must be writable.
      *
-     * @param ezcMailParserSet $set
      * @param string $location
      */
-    public function __construct( ezcMailParserSet $set, $location )
+    public function __construct( ezcMailParserSet $set, /**
+     * Holds the location where to store the message sources.
+     *
+     */
+    private $location )
     {
         $this->set = $set;
-        $this->location = $location;
         $this->path = rtrim( $this->location, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
         $this->hasMoreMailData = false;
         $this->counter = 0;
@@ -162,7 +153,7 @@ class ezcMailStorageSet implements ezcMailParserSet
         }
 
         $line = $this->set->getNextLine();
-        fputs( $this->writer, $line );
+        fputs( $this->writer, (string) $line );
         return $line;
     }
 

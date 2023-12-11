@@ -52,21 +52,13 @@ class ezcMailFileSet implements ezcMailParserSet
     private $fp = null;
 
     /**
-     * Holds the list of files that the set should serve.
-     *
-     * @var array(string)
-     */
-    private $files = array();
-
-    /**
      * This variable is true if there is more data in the mail that is being fetched.
      *
      * It is false if there is no mail being fetched currently or if all the data of the current mail
      * has been fetched.
      *
-     * @var bool
      */
-    private $hasMoreMailData = false;
+    private bool $hasMoreMailData = false;
 
     /**
      * Constructs a new set that servers the files specified by $files.
@@ -75,9 +67,13 @@ class ezcMailFileSet implements ezcMailParserSet
      *
      * @param array(string) $files
      */
-    public function __construct( array $files )
+    public function __construct( /**
+     * Holds the list of files that the set should serve.
+     *
+     * @var array(string)
+     */
+    private array $files )
     {
-        $this->files = $files;
         reset( $this->files );
         $this->hasMoreMailData = false;
     }

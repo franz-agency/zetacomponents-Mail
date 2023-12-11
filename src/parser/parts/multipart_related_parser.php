@@ -36,9 +36,8 @@ class ezcMailMultipartRelatedParser extends ezcMailMultipartParser
     /**
      * Holds the ezcMailMultipartRelated part corresponding to the data parsed with this parser.
      *
-     * @var ezcMailMultipartRelated
      */
-    private $part = null;
+    private ?\ezcMailMultipartRelated $part = null;
 
     /**
      * Constructs a new ezcMailMultipartRelatedParser.

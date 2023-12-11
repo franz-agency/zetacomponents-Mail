@@ -41,16 +41,7 @@ class ezcMailHeadersHolder implements ArrayAccess
      *
      * @var array(string=>string)
      */
-    private $lookup = array();
-
-    /**
-     * Holds the normal associative array between keys in correct case and values.
-     *
-     * Format: array(mixedCaseKey, value)
-     *
-     * @var array(string=>string)
-     */
-    private $map = array();
+    private array $lookup = [];
 
     /**
      * Constructs a new case insensitive associtive array formed around the array
@@ -58,9 +49,15 @@ class ezcMailHeadersHolder implements ArrayAccess
      *
      * @param array(string=>string) $map
      */
-    public function __construct( array $map = array() )
+    public function __construct( /**
+     * Holds the normal associative array between keys in correct case and values.
+     *
+     * Format: array(mixedCaseKey, value)
+     *
+     * @var array(string=>string)
+     */
+    private array $map = [] )
     {
-        $this->map = $map;
         foreach ( $map as $key => $value )
         {
             $this->lookup[strtolower( $key )] = $key;
@@ -103,10 +100,9 @@ class ezcMailHeadersHolder implements ArrayAccess
      * using a case insensitive lookup the new spelling will be discarded.
      *
      * @param string $key
-     * @param mixed $value
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet( $key, $value )
+    public function offsetSet( $key, mixed $value )
     {
         $lowerKey = strtolower( $key );
         if ( !array_key_exists( $lowerKey, $this->lookup ) )
@@ -126,7 +122,7 @@ class ezcMailHeadersHolder implements ArrayAccess
      */
     private function trimRecursive($value) {
         if (is_array($value)) {
-            return array_map(array($this, 'trimRecursive'), $value);
+            return array_map($this->trimRecursive(...), $value);
         }
         return trim((string) $value);
     }

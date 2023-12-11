@@ -34,18 +34,10 @@
 class ezcMailDeliveryStatusParser extends ezcMailPartParser
 {
     /**
-     * Holds the headers
-     *
-     * @var ezcMailHeadersHolder
-     */
-    private $headers;
-
-    /**
      * Holds the last parsed header value, used for folding
      *
-     * @var string
      */
-    private $headerValue;
+    private ?string $headerValue = null;
 
     /**
      * Holds the last parsed header, used for folding
@@ -57,9 +49,8 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
     /**
      * This mail part will be returned by the method finish().
      *
-     * @var ezcMailDeliveryStatus
      */
-    private $part = null;
+    private ?\ezcMailDeliveryStatus $part = null;
 
     /**
      * The current section of the parsing of delivery-status headers.
@@ -67,25 +58,25 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      * 0      = the per-message section
      * 1, ... = the per-recipient section
      *
-     * @var int
      */
-    private $section;
+    private int $section;
 
     /**
      * Holds the size of the mail part.
      *
-     * @var int
      */
-    private $size;
+    private int $size;
 
     /**
      * Constructs a new ezcMailDeliveryStatusParser with additional headers $headers.
      *
-     * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct( /**
+     * Holds the headers
+     *
+     */
+    private readonly ezcMailHeadersHolder $headers )
     {
-        $this->headers = $headers;
         $this->section = 0;
         $this->part = new ezcMailDeliveryStatus();
         $this->size = 0;
@@ -110,7 +101,7 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      */
     protected function parseHeader( $line, ezcMailHeadersHolder $headers )
     {
-        $matches = array();
+        $matches = [];
         preg_match_all( "/^([\w_-]*):\s?(.*)/", $line, $matches, PREG_SET_ORDER );
         if ( count( $matches ) > 0 )
         {

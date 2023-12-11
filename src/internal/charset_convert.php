@@ -92,7 +92,7 @@ class ezcMailCharsetConverter
      *
      * @var callback
      */
-    private static $method = array( __CLASS__, 'convertToUTF8Iconv' );
+    private static $method = [self::class, 'convertToUTF8Iconv'];
 
     /**
      * Sets the callback function used for character set conversion to UTF-8.

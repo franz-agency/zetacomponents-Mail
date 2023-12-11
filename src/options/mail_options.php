@@ -61,7 +61,7 @@ class ezcMailOptions extends ezcBaseOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->stripBccHeader = false; // default is to not strip the Bcc header
 
@@ -76,10 +76,9 @@ class ezcMailOptions extends ezcBaseOptions
      * @throws ezcBaseValueException
      *         if $propertyValue is not correct for the property $propertyName
      * @param string $propertyName
-     * @param mixed $propertyValue
      * @ignore
      */
-    public function __set( $propertyName, $propertyValue )
+    public function __set( $propertyName, mixed $propertyValue )
     {
         switch ( $propertyName )
         {

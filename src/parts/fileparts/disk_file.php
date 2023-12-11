@@ -57,9 +57,9 @@ class ezcMailFile extends ezcMailFilePart
             // get mime and content type
             $fileInfo = finfo_open( FILEINFO_MIME );
             $mimeParts = finfo_file( $fileInfo, $fileName );
-            if ( $mimeParts !== false && strpos( $mimeParts, '/' ) !== false )
+            if ( $mimeParts !== false && str_contains( $mimeParts, '/' ) )
             {
-                list( $this->contentType, $this->mimeType ) = explode( '/', $mimeParts );
+                [$this->contentType, $this->mimeType] = explode( '/', $mimeParts );
             }
             else
             {
@@ -119,12 +119,9 @@ class ezcMailFile extends ezcMailFilePart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -136,11 +133,9 @@ class ezcMailFile extends ezcMailFilePart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            default => parent::__isset( $name ),
+        };
     }
 
     /**

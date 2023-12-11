@@ -45,7 +45,7 @@ class ezcMailImapSetOptions extends ezcBaseOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->uidReferencing = false;
 
@@ -60,10 +60,9 @@ class ezcMailImapSetOptions extends ezcBaseOptions
      * @throws ezcBaseValueException
      *         if $value is not correct for the property $name
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {

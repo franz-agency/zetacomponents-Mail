@@ -67,14 +67,14 @@ class ezcMailPartWalkContext
      *
      * @var array(ezcMailPart)
      */
-    protected $parts = array();
+    protected $parts = [];
 
     /**
      * Holds the properties of this class.
      *
      * @var array(string=>mixed)
      */
-    private $properties = array();
+    private array $properties = [];
 
     /**
      * Constructs a new ezcMailPartWalkContext object.
@@ -88,7 +88,7 @@ class ezcMailPartWalkContext
     {
         $this->callbackFunction = $callbackFunction;
         $this->level = 0;
-        $this->filter = array();
+        $this->filter = [];
         $this->includeDigests = false;
     }
 
@@ -100,10 +100,9 @@ class ezcMailPartWalkContext
      * @throws ezcBaseValueException
      *         if $value is not appropiate for property $name
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -147,17 +146,10 @@ class ezcMailPartWalkContext
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'level':
-            case 'filter':
-            case 'callbackFunction':
-            case 'includeDigests':
-                return $this->properties[$name];
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'level', 'filter', 'callbackFunction', 'includeDigests' => $this->properties[$name],
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -169,23 +161,15 @@ class ezcMailPartWalkContext
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'level':
-            case 'filter':
-            case 'callbackFunction':
-            case 'includeDigests':
-                return isset( $this->properties[$name] );
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'level', 'filter', 'callbackFunction', 'includeDigests' => isset( $this->properties[$name] ),
+            default => false,
+        };
     }
 
     /**
      * Appends a part to the list of mail parts.
      *
-     * @param ezcMailPart $part
      */
     public function appendPart( ezcMailPart $part )
     {

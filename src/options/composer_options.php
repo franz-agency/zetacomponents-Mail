@@ -60,7 +60,7 @@ class ezcMailComposerOptions extends ezcMailOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->automaticImageInclude = true; // default is to include the contents of "file://" from image tags
 

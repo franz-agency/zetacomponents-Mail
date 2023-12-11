@@ -36,101 +36,6 @@
 class ezcMailContentDispositionHeader extends ezcBaseStruct
 {
     /**
-     * The disposition type, either "inline" or "attachment".
-     *
-     * @var string
-     */
-    public $disposition;
-
-    /**
-     * The filename of the attachment.
-     *
-     * The filename should never include path information.
-     *
-     * @var string
-     */
-    public $fileName;
-
-    /**
-     * The filename of the attachment, formatted for display. Used only for
-     * parsing, not used when generating a mail.
-     *
-     * The filename should never include path information.
-     *
-     * Added for issue #13038. If you use __set_state() be sure to set this
-     * property also.
-     *
-     * @var string
-     */
-    public $displayFileName;
-
-    /**
-     * The language of the filename.
-     *
-     * @var string
-     */
-    public $fileNameLanguage;
-
-    /**
-     * The characterset of the file name.
-     *
-     * @var string
-     */
-    public $fileNameCharSet;
-
-    /**
-     * The creation date of the file attachment.
-     *
-     * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
-     * section 5.
-     *
-     * A typical example is: Sun, 21 May 2006 16:00:50 +0400
-     *
-     * @var string
-     */
-    public $creationDate;
-
-    /**
-     * The last modification date of the file attachment.
-     *
-     * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
-     * section 5.
-     *
-     * A typical example is: Sun, 21 May 2006 16:00:50 +0400
-     *
-     * @var string
-     */
-    public $modificationDate;
-
-    /**
-     * The last date the file attachment was read.
-     *
-     * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
-     * section 5.
-     *
-     * A typical example is: Sun, 21 May 2006 16:00:50 +0400
-     *
-     * @var string
-     */
-    public $readDate;
-
-    /**
-     * The size of the content in bytes.
-     *
-     * @var int
-     */
-    public $size;
-
-    /**
-     * Any additional parameters provided in the Content-Disposition header.
-     *
-     * The format of the field is array(parameterName=>parameterValue)
-     *
-     * @var array(string=>string)
-     */
-    public $additionalParameters = array();
-
-    /**
      * Holds language and characterset data for the additional parameters.
      *
      * Format: array(parameterName=>array('charSet'=>string,'language'=>string))
@@ -138,7 +43,7 @@ class ezcMailContentDispositionHeader extends ezcBaseStruct
      * @apichange Merge this with $additionalParamters OR come up with an entirely new idea for the ContentDispositionHeader
      * @var array(string=>array())
      */
-    public $additionalParametersMetaData = array();
+    public $additionalParametersMetaData = [];
 
     /**
      * Constructs a new ezcMailContentDispositionHeader holding the various values of this
@@ -154,27 +59,85 @@ class ezcMailContentDispositionHeader extends ezcBaseStruct
      * @param string $fileNameLanguage
      * @param string $fileNameCharSet
      */
-    public function __construct( $disposition = 'inline',
-                                 $fileName = null,
-                                 $creationDate = null,
-                                 $modificationDate = null,
-                                 $readDate = null,
-                                 $size = null,
-                                 $additionalParameters = array(),
-                                 $fileNameLanguage = null,
-                                 $fileNameCharSet = null,
-                                 $displayFileName = null )
+    public function __construct(
+        /**
+         * The disposition type, either "inline" or "attachment".
+         *
+         */
+        public $disposition = 'inline',
+        /**
+         * The filename of the attachment.
+         *
+         * The filename should never include path information.
+         *
+         */
+        public $fileName = null,
+        /**
+         * The creation date of the file attachment.
+         *
+         * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
+         * section 5.
+         *
+         * A typical example is: Sun, 21 May 2006 16:00:50 +0400
+         *
+         */
+        public $creationDate = null,
+        /**
+         * The last modification date of the file attachment.
+         *
+         * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
+         * section 5.
+         *
+         * A typical example is: Sun, 21 May 2006 16:00:50 +0400
+         *
+         */
+        public $modificationDate = null,
+        /**
+         * The last date the file attachment was read.
+         *
+         * The time should be formatted as specified by http://www.faqs.org/rfcs/rfc822.html
+         * section 5.
+         *
+         * A typical example is: Sun, 21 May 2006 16:00:50 +0400
+         *
+         */
+        public $readDate = null,
+        /**
+         * The size of the content in bytes.
+         *
+         */
+        public $size = null,
+        /**
+         * Any additional parameters provided in the Content-Disposition header.
+         *
+         * The format of the field is array(parameterName=>parameterValue)
+         *
+         * @var array(string=>string)
+         */
+        public $additionalParameters = [],
+        /**
+         * The language of the filename.
+         *
+         */
+        public $fileNameLanguage = null,
+        /**
+         * The characterset of the file name.
+         *
+         */
+        public $fileNameCharSet = null,
+        /**
+         * The filename of the attachment, formatted for display. Used only for
+         * parsing, not used when generating a mail.
+         *
+         * The filename should never include path information.
+         *
+         * Added for issue #13038. If you use __set_state() be sure to set this
+         * property also.
+         *
+         */
+        public $displayFileName = null
+    )
     {
-        $this->disposition = $disposition;
-        $this->fileName = $fileName;
-        $this->fileNameLanguage = $fileNameLanguage;
-        $this->fileNameCharSet = $fileNameCharSet;
-        $this->displayFileName = $displayFileName;
-        $this->creationDate = $creationDate;
-        $this->modificationDate = $modificationDate;
-        $this->readDate = $readDate;
-        $this->size = $size;
-        $this->additionalParameters = $additionalParameters;
     }
 
     /**

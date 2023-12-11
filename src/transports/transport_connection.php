@@ -41,7 +41,7 @@ class ezcMailTransportConnection
     /**
      * The line-break characters to send to the server.
      */
-    const CRLF = "\r\n";
+    final public const CRLF = "\r\n";
 
     /**
      * The connection to the server or null if there is none.
@@ -53,9 +53,8 @@ class ezcMailTransportConnection
     /**
      * Options for a transport connection.
      *
-     * @var ezcMailTransportOptions
      */
-    private $options;
+    private \ezcMailTransportOptions $options;
 
     /**
      * Constructs a new connection to the $server using the port $port.
@@ -75,7 +74,6 @@ class ezcMailTransportConnection
      *         if $options contains a property with a value not allowed
      * @param string $server
      * @param int $port
-     * @param ezcMailTransportOptions $options
      */
     public function __construct( $server, $port, ezcMailTransportOptions $options = null )
     {
@@ -122,10 +120,9 @@ class ezcMailTransportConnection
      * @throws ezcBaseValueException
      *         if $value is not accepted for the property $name
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch ( $name )
         {
@@ -152,14 +149,10 @@ class ezcMailTransportConnection
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'options':
-                return $this->options;
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $name );
-        }
+        return match ($name) {
+            'options' => $this->options,
+            default => throw new ezcBasePropertyNotFoundException( $name ),
+        };
     }
 
     /**
@@ -171,14 +164,10 @@ class ezcMailTransportConnection
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'options':
-                return true;
-
-            default:
-                return false;
-        }
+        return match ($name) {
+            'options' => true,
+            default => false,
+        };
     }
 
     /**
@@ -220,7 +209,7 @@ class ezcMailTransportConnection
         if ( is_resource( $this->connection ) )
         {
             // in case there is a problem with the connection fgets() returns false
-            while ( strpos( $data, self::CRLF ) === false )
+            while ( !str_contains( $data, self::CRLF ) )
             {
                 $line = fgets( $this->connection, 512 );
 

@@ -36,9 +36,8 @@ class ezcMailMultipartMixedParser extends ezcMailMultipartParser
     /**
      * Holds the ezcMailMultipartMixed part corresponding to the data parsed with this parser.
      *
-     * @var ezcMailMultipartMixed
      */
-    private $part = null;
+    private ?\ezcMailMultipartMixed $part = null;
 
     /**
      * Constructs a new ezcMailMultipartMixedParser.

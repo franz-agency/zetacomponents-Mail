@@ -72,7 +72,6 @@ class ezcMailMultipartRelated extends ezcMailMultipart
     /**
      * Sets the main part $part of this alternative multipart.
      *
-     * @param ezcMailPart $part
      */
     public function setMainPart( ezcMailPart $part )
     {
@@ -82,7 +81,6 @@ class ezcMailMultipartRelated extends ezcMailMultipart
     /**
      * Adds $part to the list of parts and returns the Content-ID of the part.
      *
-     * @param ezcMailPart $part
      * @return string
      */
     public function addRelatedPart( ezcMailPart $part  )
@@ -100,7 +98,7 @@ class ezcMailMultipartRelated extends ezcMailMultipart
                 $part->setHeader( 'Content-ID', ezcMailTools::generateContentId( 'part' ) );
             }
         }
-        $contentId = trim( $part->getHeader( 'Content-ID' ), '<>' );
+        $contentId = trim( (string) $part->getHeader( 'Content-ID' ), '<>' );
 
         // Set the content ID property of the ezcMailFile if one was found
         if ( $part instanceof ezcMailFile )
@@ -126,11 +124,7 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      */
     public function getMainPart()
     {
-        if ( isset( $this->parts[0] ) )
-        {
-            return $this->parts[0];
-        }
-        return null;
+        return $this->parts[0] ?? null;
     }
 
     /**

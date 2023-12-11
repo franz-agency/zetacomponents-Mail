@@ -80,7 +80,7 @@ class ezcMailMboxTransport
     {
         $data = fgets( $this->fh );
         fseek( $this->fh, 0 );
-        if ( substr( $data, 0, 18 ) === 'From MAILER-DAEMON' )
+        if ( str_starts_with($data, 'From MAILER-DAEMON') )
         {
             return $this->findNextMessage();
         }
@@ -105,7 +105,7 @@ class ezcMailMboxTransport
         do
         {
             $data = fgets( $this->fh );
-        } while ( !feof( $this->fh ) && substr( $data, 0, 5 ) !== "From " );
+        } while ( !feof( $this->fh ) && !str_starts_with($data, "From ") );
 
         if ( feof( $this->fh ) )
         {
@@ -121,7 +121,7 @@ class ezcMailMboxTransport
      */
     public function listMessages()
     {
-        $messages = array();
+        $messages = [];
         fseek( $this->fh, 0 );
         // Skip the first mail as this is the mbox header
         $position = $this->findFirstMessage();
@@ -168,7 +168,7 @@ class ezcMailMboxTransport
         {
             throw new ezcMailNoSuchMessageException( $number );
         }
-        return new ezcMailMboxSet( $this->fh, array( 0 => $messages[$number] ) );
+        return new ezcMailMboxSet( $this->fh, [0 => $messages[$number]] );
     }
 
     /**

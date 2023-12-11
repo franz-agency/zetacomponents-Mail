@@ -51,27 +51,6 @@ class ezcMailFileParser extends ezcMailPartParser
     public static $fileClass = 'ezcMailFile';
 
     /**
-     * Holds the headers for this part.
-     *
-     * @var ezcMailHeadersHolder
-     */
-    private $headers = null;
-
-    /**
-     * Holds the maintype of the parsed part.
-     *
-     * @var string
-     */
-    private $mainType = null;
-
-    /**
-     * Holds the subtype of the parsed part.
-     *
-     * @var string
-     */
-    private $subType = null;
-
-    /**
      * Holds the filepointer to the attachment.
      *
      * @var resource
@@ -81,25 +60,22 @@ class ezcMailFileParser extends ezcMailPartParser
     /**
      * Holds the full path and filename of the file to save to.
      *
-     * @var string
      */
-    private $fileName = null;
+    private ?string $fileName = null;
 
     /**
      * Static counter used to generate unique directory names.
      *
-     * @var int
      */
-    private static $counter = 1;
+    private static int $counter = 1;
 
     /**
      * Holds if data has been written to the output file or not.
      *
      * This is used for delayed filter adding neccessary for quoted-printable.
      *
-     * @var bool
      */
-    private $dataWritten = false;
+    private bool $dataWritten = false;
 
     /**
      * Constructs a new ezcMailFileParser with maintype $mainType subtype $subType
@@ -109,26 +85,33 @@ class ezcMailFileParser extends ezcMailPartParser
      *         if the file attachment file could not be openened.
      * @param string $mainType
      * @param string $subType
-     * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( $mainType, $subType, ezcMailHeadersHolder $headers )
+    public function __construct( /**
+     * Holds the maintype of the parsed part.
+     *
+     */
+    private $mainType, /**
+     * Holds the subtype of the parsed part.
+     *
+     */
+    private $subType, /**
+     * Holds the headers for this part.
+     *
+     */
+    private ezcMailHeadersHolder $headers )
     {
-        $this->mainType = $mainType;
-        $this->subType = $subType;
-        $this->headers = $headers;
-
         // figure out the base filename
         // search Content-Disposition first as specified by RFC 2183
-        $matches = array();
+        $matches = [];
         if (
             $this->headers['Content-Disposition'] &&
-            preg_match( '/\s*filename=\s?"?([^;"]*);?/i', $this->headers['Content-Disposition'], $matches )
+            preg_match( '/\s*filename=\s?"?([^;"]*);?/i', (string) $this->headers['Content-Disposition'], $matches )
         ) {
             $fileName = trim( $matches[1], '"' );
         }
         // fallback to the name parameter in Content-Type as specified by RFC 2046 4.5.1
         else if ( preg_match( '/\s*name=\s?"?([^;"]*);?/i',
-                             $this->headers['Content-Type'], $matches ) )
+                             (string) $this->headers['Content-Type'], $matches ) )
         {
             $fileName = trim( $matches[1], '"' );
         }
@@ -232,7 +215,7 @@ class ezcMailFileParser extends ezcMailPartParser
                 preg_match( "/(\r\n|\r|\n)$/", $line, $matches );
                 $lb = count( $matches ) > 0 ? $matches[0] : ezcMailTools::lineBreak();
 
-                $param = array( 'line-break-chars' => $lb );
+                $param = ['line-break-chars' => $lb];
                 stream_filter_append( $this->fp, 'convert.quoted-printable-decode',
                                       STREAM_FILTER_WRITE, $param );
                 break;
@@ -323,14 +306,14 @@ class ezcMailFileParser extends ezcMailPartParser
         $filePart->mimeType = $this->subType;
 
         // set inline disposition mode if set.
-        $matches = array();
+        $matches = [];
         if ( $this->headers['Content-Disposition'] )
         {
-            if ( preg_match( '/^\s*inline;?/i', $this->headers['Content-Disposition'], $matches ) )
+            if ( preg_match( '/^\s*inline;?/i', (string) $this->headers['Content-Disposition'], $matches ) )
             {
                 $filePart->dispositionType = ezcMailFile::DISPLAY_INLINE;
             }
-            if ( preg_match( '/^\s*attachment;?/i', $this->headers['Content-Disposition'], $matches ) )
+            if ( preg_match( '/^\s*attachment;?/i', (string) $this->headers['Content-Disposition'], $matches ) )
             {
                 $filePart->dispositionType = ezcMailFile::DISPLAY_ATTACHMENT;
             }

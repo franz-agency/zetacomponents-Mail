@@ -36,9 +36,8 @@ abstract class ezcMailMultipartParser extends ezcMailPartParser
     /**
      * The boundary separator string.
      *
-     * @var string
      */
-    private $boundary = null;
+    private ?string $boundary = null;
 
     /**
      * The headers for the multipart.
@@ -50,9 +49,8 @@ abstract class ezcMailMultipartParser extends ezcMailPartParser
     /**
      * The headers for the current subpart.
      *
-     * @var ezcMailHeadersHolder
      */
-    private $currentPartHeaders = null;
+    private ?\ezcMailHeadersHolder $currentPartHeaders = null;
 
     /**
      * The current part.
@@ -64,34 +62,32 @@ abstract class ezcMailMultipartParser extends ezcMailPartParser
     /**
      * This state is used prior to hitting the first part.
      */
-    const PARSE_STATE_PRE_FIRST = 1;
+    final public const PARSE_STATE_PRE_FIRST = 1;
 
     /**
      * This state is used when the parser is parsing headers.
      */
-    const PARSE_STATE_HEADERS = 2;
+    final public const PARSE_STATE_HEADERS = 2;
 
     /**
      * This state is used when the parser is parsing the body.
      */
-    const PARSE_STATE_BODY = 3;
+    final public const PARSE_STATE_BODY = 3;
 
     /**
      * This state is set after the last of the parts is closed.
      */
-    const PARSE_STATE_POST_LAST = 4;
+    final public const PARSE_STATE_POST_LAST = 4;
 
     /**
      * Stores the state of the parser.
      *
-     * @var int
      */
-    private $parserState = self::PARSE_STATE_PRE_FIRST;
+    private int $parserState = self::PARSE_STATE_PRE_FIRST;
 
     /**
      * Constructs a new Multipart parser.
      *
-     * @param ezcMailHeadersHolder $headers
      */
     public function __construct( ezcMailHeadersHolder $headers )
     {
@@ -99,7 +95,7 @@ abstract class ezcMailMultipartParser extends ezcMailPartParser
 
         // get the boundary
         preg_match( '/\s*boundary="?([^;"]*);?/i',
-                    $this->headers['Content-Type'],
+                    (string) $this->headers['Content-Type'],
                     $parameters );
         if ( count( $parameters ) > 0 )
         {

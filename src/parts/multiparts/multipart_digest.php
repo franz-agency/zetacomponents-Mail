@@ -53,7 +53,7 @@ class ezcMailMultipartDigest extends ezcMailMultipart
     public function __construct()
     {
         $args = func_get_args();
-        parent::__construct( array() );
+        parent::__construct( [] );
         foreach ( $args as $part )
         {
             if ( $part instanceof ezcMail  )
@@ -84,7 +84,6 @@ class ezcMailMultipartDigest extends ezcMailMultipart
     /**
      * Appends a part to the list of parts.
      *
-     * @param ezcMailRfc822Digest $part
      */
     public function appendPart( ezcMailRfc822Digest $part )
     {

@@ -154,7 +154,7 @@ class ezcMailComposer extends ezcMail
      *
      * @var array(string)
      */
-    private $attachments = array();
+    private array $attachments = [];
 
     /**
      * Holds the options for this class.
@@ -229,20 +229,11 @@ class ezcMailComposer extends ezcMail
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'plainText':
-            case 'htmlText':
-            case 'charset':
-            case 'encoding':
-                return $this->properties[$name];
-
-            case 'options':
-                return $this->options;
-
-            default:
-                return parent::__get( $name );
-        }
+        return match ($name) {
+            'plainText', 'htmlText', 'charset', 'encoding' => $this->properties[$name],
+            'options' => $this->options,
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -254,20 +245,11 @@ class ezcMailComposer extends ezcMail
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'plainText':
-            case 'htmlText':
-            case 'charset':
-            case 'encoding':
-                return isset( $this->properties[$name] );
-
-            case 'options':
-                return isset( $this->options );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'plainText', 'htmlText', 'charset', 'encoding' => isset( $this->properties[$name] ),
+            'options' => isset( $this->options ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**
@@ -284,7 +266,7 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @throws ezcBaseFileNotFoundException
      *         if $fileName does not exists.
      * @throws ezcBaseFilePermissionProblem
@@ -293,7 +275,6 @@ class ezcMailComposer extends ezcMail
      * @param string $content
      * @param string $contentType
      * @param string $mimeType
-     * @param ezcMailContentDispositionHeader $contentDisposition
      * @apichange This function might be removed in a future iteration of
      *            the Mail component. Use addFileAttachment() and
      *            addStringAttachment() instead.
@@ -320,7 +301,7 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @throws ezcBaseFileNotFoundException
      *         if $fileName does not exists.
      * @throws ezcBaseFilePermissionProblem
@@ -328,13 +309,12 @@ class ezcMailComposer extends ezcMail
      * @param string $fileName
      * @param string $contentType
      * @param string $mimeType
-     * @param ezcMailContentDispositionHeader $contentDisposition
      */
     public function addFileAttachment( $fileName, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null )
     {
         if ( is_readable( $fileName ) )
         {
-            $this->attachments[] = array( $fileName, null, $contentType, $mimeType, $contentDisposition );
+            $this->attachments[] = [$fileName, null, $contentType, $mimeType, $contentDisposition];
         }
         else
         {
@@ -362,16 +342,15 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @param string $fileName
      * @param string $content
      * @param string $contentType
      * @param string $mimeType
-     * @param ezcMailContentDispositionHeader $contentDisposition
      */
     public function addStringAttachment( $fileName, $content, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null )
     {
-        $this->attachments[] = array( $fileName, $content, $contentType, $mimeType, $contentDisposition );
+        $this->attachments[] = [$fileName, $content, $contentType, $mimeType, $contentDisposition];
     }
 
     /**
@@ -481,7 +460,7 @@ class ezcMailComposer extends ezcMail
         $result = false;
         if ( $this->htmlText != '' )
         {
-            $matches = array();
+            $matches = [];
             if ( $this->options->automaticImageInclude === true )
             {
                 // recognize file:// and file:///, pick out the image, add it as a part and then..:)

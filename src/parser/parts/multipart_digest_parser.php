@@ -36,9 +36,8 @@ class ezcMailMultipartDigestParser extends ezcMailMultipartParser
     /**
      * Holds the ezcMailMultipartDigest part corresponding to the data parsed with this parser.
      *
-     * @var ezcMailMultipartDigest
      */
-    private $part = null;
+    private ?\ezcMailMultipartDigest $part = null;
 
     /**
      * Constructs a new ezcMailMultipartDigestParser.

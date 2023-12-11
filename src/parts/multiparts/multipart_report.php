@@ -105,16 +105,10 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'reportType':
-                return $this->properties[$name];
-                break;
-
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            'reportType' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -126,20 +120,15 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'reportType':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'reportType' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**
      * Appends a part to the list of parts.
      *
-     * @param ezcMailPart $part
      */
     public function appendPart( ezcMailPart $part )
     {
@@ -159,7 +148,6 @@ class ezcMailMultipartReport extends ezcMailMultipart
     /**
      * Sets the readable $part of this report multipart.
      *
-     * @param ezcMailPart $part
      */
     public function setReadablePart( ezcMailPart $part )
     {
@@ -173,17 +161,12 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getReadablePart()
     {
-        if ( isset( $this->parts[0] ) )
-        {
-            return $this->parts[0];
-        }
-        return null;
+        return $this->parts[0] ?? null;
     }
 
     /**
      * Sets the machine $part of this report multipart.
      *
-     * @param ezcMailPart $part
      */
     public function setMachinePart( ezcMailPart $part )
     {
@@ -197,17 +180,12 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getMachinePart()
     {
-        if ( isset( $this->parts[1] ) )
-        {
-            return $this->parts[1];
-        }
-        return null;
+        return $this->parts[1] ?? null;
     }
 
     /**
      * Sets the original content $part of this report multipart.
      *
-     * @param ezcMailPart $part
      */
     public function setOriginalPart( ezcMailPart $part )
     {
@@ -221,11 +199,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getOriginalPart()
     {
-        if ( isset( $this->parts[2] ) )
-        {
-            return $this->parts[2];
-        }
-        return null;
+        return $this->parts[2] ?? null;
     }
 
     /**

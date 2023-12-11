@@ -42,7 +42,7 @@ class ezcMailMtaTransport implements ezcMailTransport
     /**
      * Characters allowed in the returnPath address
      */
-    const RETURN_PATH_CHARS = 'A-Za-z0-9_.@=/+{}#~\-\'';
+    final public const RETURN_PATH_CHARS = 'A-Za-z0-9_.@=/+{}#~\-\'';
 
     /**
      * Constructs a new ezcMailMtaTransport.
@@ -63,7 +63,7 @@ class ezcMailMtaTransport implements ezcMailTransport
      */
     public function send( ezcMail $mail )
     {
-        $mail->appendExcludeHeaders( array( 'to', 'subject' ) );
+        $mail->appendExcludeHeaders( ['to', 'subject'] );
         $headers = rtrim( $mail->generateHeaders() ); // rtrim removes the linebreak at the end, mail doesn't want it.
 
         if ( ( count( $mail->to ) + count( $mail->cc ) + count( $mail->bcc ) ) < 1 )
@@ -77,7 +77,7 @@ class ezcMailMtaTransport implements ezcMailTransport
             $additionalParameters = "-f{$sanitized}";
         }
         $success = mail( ezcMailTools::composeEmailAddresses( $mail->to ),
-                         $mail->getHeader( 'Subject' ), $mail->generateBody(), $headers, $additionalParameters );
+                         (string) $mail->getHeader( 'Subject' ), $mail->generateBody(), $headers, $additionalParameters );
         if ( $success === false )
         {
             throw new ezcMailTransportException( 'The email could not be sent by sendmail' );

@@ -37,12 +37,12 @@ class ezcMailTools
     /**
      * Reply to sender.
      */
-    const REPLY_SENDER = 1;
+    final public const REPLY_SENDER = 1;
 
     /**
      * Reply to all.
      */
-    const REPLY_ALL = 2;
+    final public const REPLY_ALL = 2;
 
     /**
      * Server to use for validateEmailAddressMx(). Change this if this server
@@ -67,18 +67,16 @@ class ezcMailTools
     /**
      * Holds the unique ID's.
      *
-     * @var int
      */
-    private static $idCounter = 0;
+    private static int $idCounter = 0;
 
     /**
      * The characters to use for line-breaks in the mail.
      *
      * The default is \r\n which is the value specified in RFC822.
      *
-     * @var string
      */
-    private static $lineBreak = "\r\n";
+    private static string $lineBreak = "\r\n";
 
     /**
      * Returns ezcMailAddress $item as a RFC822 compliant address string.
@@ -96,7 +94,6 @@ class ezcMailTools
      * The name part of $item will be surrounded by quotes if it contains any of
      * these characters: , @ < > : ; ' "
      *
-     * @param ezcMailAddress $item
      * @return string
      */
     public static function composeEmailAddress( ezcMailAddress $item )
@@ -118,7 +115,7 @@ class ezcMailTools
                 $name = "\"{$name}\"";
             }
 
-            switch ( strtolower( $item->charset ) )
+            switch ( strtolower( (string) $item->charset ) )
             {
                 case 'us-ascii':
                     $text = $name . ' <' . $item->email . '>';
@@ -162,7 +159,7 @@ class ezcMailTools
      */
     public static function composeEmailAddresses( array $items, $foldLength = null )
     {
-        $textElements = array();
+        $textElements = [];
         foreach ( $items as $item )
         {
             $textElements[] = ezcMailTools::composeEmailAddress( $item );
@@ -229,7 +226,7 @@ class ezcMailTools
     {
         // we don't care about the "group" part of the address since this is not used anywhere
 
-        $matches = array();
+        $matches = [];
         $pattern = '/<?\"?[a-zA-Z0-9!#\$\%\&\'\*\+\-\/=\?\^_`{\|}~\.]+\"?@[a-zA-Z0-9!#\$\%\&\'\*\+\-\/=\?\^_`{\|}~\.]+>?$/';
         if ( preg_match( trim( $pattern ), $address, $matches, PREG_OFFSET_CAPTURE ) != 1 )
         {
@@ -275,7 +272,7 @@ class ezcMailTools
      */
     public static function parseEmailAddresses( $addresses, $encoding = "mime" )
     {
-        $addressesArray = array();
+        $addressesArray = [];
         $inQuote = false;
         $last = 0; // last hit
         $length = strlen( $addresses );
@@ -295,7 +292,7 @@ class ezcMailTools
         // fetch the last one
         $addressesArray[] = substr( $addresses, $last );
 
-        $addressObjects = array();
+        $addressObjects = [];
         foreach ( $addressesArray as $address )
         {
             $addressObject = self::parseEmailAddress( $address, $encoding );
@@ -426,7 +423,7 @@ class ezcMailTools
         $timeoutOpen = 3; // for fsockopen()
         $timeoutConnection = 5; // for stream_set_timeout()
 
-        list( $local, $domain ) = explode( '@', $address );
+        [$local, $domain] = explode( '@', $address );
         if ( !empty( $domain ) )
         {
             if ( getmxrr( $domain, $hosts, $weights ) )
@@ -445,17 +442,12 @@ class ezcMailTools
             }
             else
             {
-                $mx = array();
+                $mx = [];
             }
 
             if ( ( $numberOfMx = count( $mx ) ) > 0 )
             {
-                $smtp = array(
-                               "HELO " . self::$mxValidateServer,
-                               "MAIL FROM: <" . self::$mxValidateAddress . ">",
-                               "RCPT TO: <{$address}>",
-                               "QUIT",
-                             );
+                $smtp = ["HELO " . self::$mxValidateServer, "MAIL FROM: <" . self::$mxValidateAddress . ">", "RCPT TO: <{$address}>", "QUIT"];
 
                 for ( $i = 0; $i < $numberOfMx; $i++ )
                 {
@@ -510,7 +502,7 @@ class ezcMailTools
      */
     public static function generateMessageId( $hostname )
     {
-        if ( strpos( $hostname, '@' ) !== false )
+        if ( str_contains( $hostname, '@' ) )
         {
             $hostname = strstr( $hostname, '@' );
         }
@@ -535,7 +527,7 @@ class ezcMailTools
      */
     public static function generateContentId( $partName = "part" )
     {
-        return str_replace( array( '=', '+', '/' ), '', base64_encode( $partName ) ) . '@' .  date( 'His' ) . self::$idCounter++;
+        return str_replace( ['=', '+', '/'], '', base64_encode( $partName ) ) . '@' .  date( 'His' ) . self::$idCounter++;
     }
 
     /**
@@ -587,10 +579,7 @@ class ezcMailTools
         // Try to fix lower case hex digits
         $text = preg_replace_callback(
             '/=(([a-f][a-f0-9])|([a-f0-9][a-f]))/',
-            function( $matches )
-            {
-                return strtoupper( $matches[0] );
-            },
+            fn($matches) => strtoupper( (string) $matches[0] ),
             $origtext
         );
         $text = @iconv_mime_decode( $text, 0, $charset );
@@ -601,7 +590,7 @@ class ezcMailTools
 
         // Workaround a bug in PHP 5.1.0-5.1.3 where the "b" and "q" methods
         // are not understood (but only "B" and "Q")
-        $text = str_replace( array( '?b?', '?q?' ), array( '?B?', '?Q?' ), $origtext );
+        $text = str_replace( ['?b?', '?q?'], ['?B?', '?Q?'], $origtext );
         $text = @iconv_mime_decode( $text, 0, $charset );
         if ( $text !== false )
         {
@@ -634,8 +623,6 @@ class ezcMailTools
      * Use $subjectPrefix to set the prefix to the subject of the mail. The default
      * is to prefix with 'Re: '.
      *
-     * @param ezcMail $mail
-     * @param ezcMailAddress $from
      * @param int $type REPLY_SENDER or REPLY_ALL
      * @param string $subjectPrefix
      * @param string $mailClass
@@ -656,13 +643,13 @@ class ezcMailTools
         else  // Else To = From
 
         {
-            $reply->to = array( $mail->from );
+            $reply->to = [$mail->from];
         }
 
         if ( $type == self::REPLY_ALL )
         {
             // Cc = Cc + To - your own address
-            $cc = array();
+            $cc = [];
             foreach ( $mail->to as $address )
             {
                 if ( $address->email != $from->email )
@@ -808,13 +795,7 @@ class ezcMailTools
      */
     static public function mimeHeaderEncode( $value, $charset )
     {
-        $preferences = array(
-            'input-charset' => $charset,
-            'output-charset' => $charset,
-            'line-length' => ezcMailHeaderFolder::getLimit(),
-            'scheme' => 'Q',
-            'line-break-chars' => self::lineBreak()
-        );
+        $preferences = ['input-charset' => $charset, 'output-charset' => $charset, 'line-length' => ezcMailHeaderFolder::getLimit(), 'scheme' => 'Q', 'line-break-chars' => self::lineBreak()];
         // Mime encoding can fail with iconv when using multi-byte strings, generating a notice.
         // See https://bugs.php.net/bug.php?id=53891
         // I know, using the silent operator is usually evil, but we have no choice here...

@@ -37,34 +37,27 @@
 class ezcMailRfc822DigestParser extends ezcMailPartParser
 {
     /**
-     * Holds the headers for this part.
-     *
-     * @var ezcMailHeadersHolder
-     */
-    private $headers = null;
-
-    /**
      * Holds the digested message parser.
      *
-     * @var ezcMailPartParser
      */
-    private $mailParser = null;
+    private ?\ezcMailRfc822Parser $mailParser = null;
 
     /**
      * Holds the size of the digest.
      *
-     * @var int
      */
-    private $size;
+    private int $size;
 
     /**
      * Constructs a new digest parser with the headers $headers.
      *
-     * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct( /**
+     * Holds the headers for this part.
+     *
+     */
+    private readonly ezcMailHeadersHolder $headers )
     {
-        $this->headers = $headers;
         $this->mailParser = new ezcMailRfc822Parser();
         $this->size = 0;
     }

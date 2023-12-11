@@ -70,7 +70,6 @@ class ezcMailMultipartAlternative extends ezcMailMultipart
     /**
      * Appends a part to the list of parts.
      *
-     * @param ezcMailPart $part
      */
     public function appendPart( ezcMailPart $part )
     {

@@ -34,29 +34,8 @@
  * @version //autogentag//
  * @mainclass
  */
-class ezcMailAddress extends ezcBaseStruct
+class ezcMailAddress extends ezcBaseStruct implements \Stringable
 {
-    /**
-     * The name of the recipient (optional).
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * The email address of the recipient.
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * The character set used in the $name property.
-     *
-     * The characterset defaults to us-ascii.
-     */
-    public $charset;
-
     /**
      * Constructs a new ezcMailAddress with the mail address $email and the optional name $name.
      *
@@ -64,11 +43,20 @@ class ezcMailAddress extends ezcBaseStruct
      * @param string $name
      * @param string $charset
      */
-    public function __construct( $email, $name = '', $charset = 'us-ascii' )
+    public function __construct(
+        /**
+         * The email address of the recipient.
+         *
+         */
+        public $email,
+        /**
+         * The name of the recipient (optional).
+         *
+         */
+        public $name = '',
+        public $charset = 'us-ascii'
+    )
     {
-        $this->name = $name;
-        $this->email = $email;
-        $this->charset = $charset;
     }
 
     /**
@@ -99,7 +87,7 @@ class ezcMailAddress extends ezcBaseStruct
      *
      * @return string String representation of the email address.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return ( !empty( $this->name ) ? "{$this->name} " : "" ) . "<{$this->email}>";
     }

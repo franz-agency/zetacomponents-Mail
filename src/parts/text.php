@@ -123,17 +123,10 @@ class ezcMailText extends ezcMailPart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'charset':
-            case 'originalCharset':
-            case 'subType':
-            case 'encoding':
-            case 'text':
-                return $this->properties[$name];
-            default:
-                return parent::__get( $name );
-        }
+        return match ($name) {
+            'charset', 'originalCharset', 'subType', 'encoding', 'text' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -145,18 +138,10 @@ class ezcMailText extends ezcMailPart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'charset':
-            case 'originalCharset':
-            case 'subType':
-            case 'encoding':
-            case 'text':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'charset', 'originalCharset', 'subType', 'encoding', 'text' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**
@@ -190,10 +175,7 @@ class ezcMailText extends ezcMailPart
                 return chunk_split( base64_encode( $this->text ), 76, ezcMailTools::lineBreak() );
                 break;
             case ezcMail::QUOTED_PRINTABLE:
-                 $text = preg_replace_callback( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/', function( $matches )
-                 {
-                     return sprintf("=%02X", ord($matches[0]));
-                 }, $this->text );
+                 $text = preg_replace_callback( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/', fn($matches) => sprintf("=%02X", ord($matches[0])), $this->text );
                  preg_match_all( '/.{1,73}([^=]{0,2})?/', $text, $match );
                  $text = implode( '=' . ezcMailTools::lineBreak(), $match[0] );
                 return $text;

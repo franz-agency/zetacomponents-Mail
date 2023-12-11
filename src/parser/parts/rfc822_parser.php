@@ -39,26 +39,24 @@ class ezcMailRfc822Parser extends ezcMailPartParser
     /**
      * Holds the headers parsed.
      *
-     * @var ezcMailHeadersHolder
      */
-    private $headers = null;
+    private ?\ezcMailHeadersHolder $headers = null;
 
     /**
      * This state is used when the parser is parsing headers.
      */
-    const PARSE_STATE_HEADERS = 1;
+    final public const PARSE_STATE_HEADERS = 1;
 
     /**
      * This state is used when the parser is parsing the body.
      */
-    const PARSE_STATE_BODY = 2;
+    final public const PARSE_STATE_BODY = 2;
 
     /**
      * Stores the state of the parser.
      *
-     * @var int
      */
-    private $parserState = self::PARSE_STATE_HEADERS;
+    private int $parserState = self::PARSE_STATE_HEADERS;
 
     /**
      * The parser of the body.

@@ -58,7 +58,7 @@ class ezcMailPop3TransportOptions extends ezcMailTransportOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         // default authentication method is PLAIN
         $this->authenticationMethod = ezcMailPop3Transport::AUTH_PLAIN_TEXT;

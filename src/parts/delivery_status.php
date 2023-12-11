@@ -99,17 +99,10 @@ class ezcMailDeliveryStatus extends ezcMailPart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'message':
-            case 'recipients':
-                return $this->properties[$name];
-                break;
-
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            'message', 'recipients' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -121,15 +114,10 @@ class ezcMailDeliveryStatus extends ezcMailPart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'message':
-            case 'recipients':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'message', 'recipients' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**
@@ -165,7 +153,6 @@ class ezcMailDeliveryStatus extends ezcMailPart
     /**
      * Returns the generated text for a section of the delivery-status part.
      *
-     * @param ezcMailHeadersHolder $headers
      * @return string
      */
     private function addHeadersSection( ezcMailHeadersHolder $headers )

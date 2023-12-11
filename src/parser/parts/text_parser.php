@@ -41,30 +41,24 @@ class ezcMailTextParser extends ezcMailPartParser
     private $text = null;
 
     /**
-     * Holds the headers of this text part.
-     *
-     * @var ezcMailHeadersHolder
-     */
-    private $headers = null;
-
-    /**
-     * Holds the subtype of the parsed part.
-     *
-     * @var string
-     */
-    private $subType = null;
-
-    /**
      * Constructs a new ezcMailTextParser of the subtype $subType and
      * additional headers $headers.
      *
      * @param string $subType
-     * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( $subType, ezcMailHeadersHolder $headers )
+    public function __construct(
+        /**
+         * Holds the subtype of the parsed part.
+         *
+         */
+        private $subType,
+        /**
+         * Holds the headers of this text part.
+         *
+         */
+        private ezcMailHeadersHolder $headers
+    )
     {
-        $this->subType = $subType;
-        $this->headers = $headers;
     }
 
     /**
@@ -96,7 +90,7 @@ class ezcMailTextParser extends ezcMailPartParser
         if ( isset( $this->headers['Content-Type'] ) )
         {
             preg_match( '/\s*charset\s?=\s?"?([^;"\s]*);?/i',
-                            $this->headers['Content-Type'],
+                            (string) $this->headers['Content-Type'],
                             $parameters );
             if ( count( $parameters ) > 0 )
             {
@@ -111,7 +105,7 @@ class ezcMailTextParser extends ezcMailPartParser
 
         if ( $this->headers['Content-Transfer-Encoding'] )
         {
-            $encoding = strtolower( $this->headers['Content-Transfer-Encoding'] );
+            $encoding = strtolower( (string) $this->headers['Content-Transfer-Encoding'] );
             if ( $encoding == ezcMail::QUOTED_PRINTABLE )
             {
                 $this->text = quoted_printable_decode( $this->text );

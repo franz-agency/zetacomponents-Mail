@@ -53,19 +53,18 @@ class ezcMailHeaderFolder
     /**
      * The soft limit of 76 characters per line.
      */
-    const SOFT_LIMIT = 76;
+    final public const SOFT_LIMIT = 76;
 
     /**
      * The soft limit of 998 characters per line.
      */
-    const HARD_LIMIT = 998;
+    final public const HARD_LIMIT = 998;
 
     /**
      * The default folding limit.
      *
-     * @var int
      */
-    static private $limit = 76;
+    static private int $limit = 76;
 
     /**
      * Sets the number of allowed characters before folding to $numCharacters.
@@ -103,7 +102,7 @@ class ezcMailHeaderFolder
     static public function foldAny( $text )
     {
         // Don't fold unless we have to (e.g. when text is already folded or it doesn't reach the limit).
-        if ( strpos( $text, ezcMailTools::lineBreak() ) !== false || strlen( $text ) <= self::$limit )
+        if ( str_contains( $text, ezcMailTools::lineBreak() ) || strlen( $text ) <= self::$limit )
         {
             return $text;
         }

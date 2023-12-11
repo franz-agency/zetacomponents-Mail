@@ -36,9 +36,8 @@ class ezcMailMultipartAlternativeParser extends ezcMailMultipartParser
     /**
      * Holds the ezcMailMultipartAlternative part corresponding to the data parsed with this parser.
      *
-     * @var ezcMailMultipartAlternative
      */
-    private $part = null;
+    private ?\ezcMailMultipartAlternative $part = null;
 
     /**
      * Constructs a new ezcMailMultipartAlternativeParser.

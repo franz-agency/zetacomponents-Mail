@@ -36,9 +36,8 @@ class ezcMailMultipartReportParser extends ezcMailMultipartParser
     /**
      * Holds the ezcMailMultipartReport part corresponding to the data parsed with this parser.
      *
-     * @var ezcMailMultipartReport
      */
-    private $report;
+    private readonly \ezcMailMultipartReport $report;
 
     /**
      * Holds the mail parts which will be part of the returned multipart report.
@@ -56,9 +55,9 @@ class ezcMailMultipartReportParser extends ezcMailMultipartParser
     {
         parent::__construct( $headers );
         $this->report = new ezcMailMultipartReport();
-        $this->parts = array();
+        $this->parts = [];
         preg_match( '/\s*report-type="?([^;"]*);?/i',
-                    $this->headers['Content-Type'],
+                    (string) $this->headers['Content-Type'],
                     $parameters );
         if ( count( $parameters ) > 0 )
         {

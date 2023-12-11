@@ -57,13 +57,7 @@ abstract class ezcMailPartParser
      *
      * @var array(string)
      */
-    protected static $uniqueHeaders = array( 'bcc', 'cc', 'content-type',
-                                             'content-disposition', 'from',
-                                             'content-transfer-encoding',
-                                             'return-path',
-                                             'in-reply-to', 'references',
-                                             'message-id', 'date', 'reply-to',
-                                             'sender', 'subject', 'sender', 'to' );
+    protected static $uniqueHeaders = ['bcc', 'cc', 'content-type', 'content-disposition', 'from', 'content-transfer-encoding', 'return-path', 'in-reply-to', 'references', 'message-id', 'date', 'reply-to', 'sender', 'subject', 'sender', 'to'];
 
     /**
      * The default is to parse text attachments into ezcMailTextPart objects.
@@ -115,7 +109,6 @@ abstract class ezcMailPartParser
      *
      * @throws ezcBaseFileNotFoundException
      *         if a neccessary temporary file could not be openened.
-     * @param ezcMailHeadersHolder $headers
      * @return ezcMailPartParser
      */
     static public function createPartParserForHeaders( ezcMailHeadersHolder $headers )
@@ -127,10 +120,10 @@ abstract class ezcMailPartParser
         // parse the Content-Type header
         if ( isset( $headers['Content-Type'] ) )
         {
-            $matches = array();
+            $matches = [];
             // matches "type/subtype; blahblahblah"
             preg_match_all( '/^(\S+)\/([^;]+)/',
-                            $headers['Content-Type'], $matches, PREG_SET_ORDER );
+                            (string) $headers['Content-Type'], $matches, PREG_SET_ORDER );
             if ( count( $matches ) > 0 )
             {
                 $mainType = strtolower( $matches[0][1] );
@@ -151,20 +144,11 @@ abstract class ezcMailPartParser
                 break;
 
             case 'message':
-                switch ( $subType )
-                {
-                    case "rfc822":
-                        $bodyParser = new ezcMailRfc822DigestParser( $headers );
-                        break;
-
-                    case "delivery-status":
-                        $bodyParser = new ezcMailDeliveryStatusParser( $headers );
-                        break;
-
-                    default:
-                        $bodyParser = new ezcMailFileParser( $mainType, $subType, $headers );
-                        break;
-                }
+                $bodyParser = match ($subType) {
+                    "rfc822" => new ezcMailRfc822DigestParser( $headers ),
+                    "delivery-status" => new ezcMailDeliveryStatusParser( $headers ),
+                    default => new ezcMailFileParser( $mainType, $subType, $headers ),
+                };
                 break;
 
             case 'text':
@@ -179,27 +163,14 @@ abstract class ezcMailPartParser
                 break;
 
             case 'multipart':
-                switch ( $subType )
-                {
-                    case 'mixed':
-                        $bodyParser = new ezcMailMultipartMixedParser( $headers );
-                        break;
-                    case 'alternative':
-                        $bodyParser = new ezcMailMultipartAlternativeParser( $headers );
-                        break;
-                    case 'related':
-                        $bodyParser = new ezcMailMultipartRelatedParser( $headers );
-                        break;
-                    case 'digest':
-                        $bodyParser = new ezcMailMultipartDigestParser( $headers );
-                        break;
-                    case 'report':
-                        $bodyParser = new ezcMailMultipartReportParser( $headers );
-                        break;
-                    default:
-                        $bodyParser = new ezcMailMultipartMixedParser( $headers );
-                        break;
-                }
+                $bodyParser = match ($subType) {
+                    'mixed' => new ezcMailMultipartMixedParser( $headers ),
+                    'alternative' => new ezcMailMultipartAlternativeParser( $headers ),
+                    'related' => new ezcMailMultipartRelatedParser( $headers ),
+                    'digest' => new ezcMailMultipartDigestParser( $headers ),
+                    'report' => new ezcMailMultipartReportParser( $headers ),
+                    default => new ezcMailMultipartMixedParser( $headers ),
+                };
                 break;
 
                 /* extensions */
@@ -224,7 +195,7 @@ abstract class ezcMailPartParser
      */
     protected function parseHeader( $line, ezcMailHeadersHolder $headers )
     {
-        $matches = array();
+        $matches = [];
         preg_match_all( "/^([\w_-]*):\s?(.*)/", $line, $matches, PREG_SET_ORDER );
         if ( count( $matches ) > 0 )
         {
@@ -262,8 +233,6 @@ abstract class ezcMailPartParser
      * Currently we only have Content-Disposition on the ezcMailPart level.
      * All parser parts must call this method once.
      *
-     * @param ezcMailHeadersHolder $headers
-     * @param ezcMailPart $part
      */
     static public function parsePartHeaders( ezcMailHeadersHolder $headers, ezcMailPart $part )
     {

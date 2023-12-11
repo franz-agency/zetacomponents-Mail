@@ -40,13 +40,6 @@
 class ezcMailPop3Set implements ezcMailParserSet
 {
     /**
-     * Holds the list of messages that the user wants to retrieve from the server.
-     *
-     * @var array(int)
-     */
-    private $messages;
-
-    /**
      * Holds the current message the user is fetching.
      *
      * The variable is null before the first message and false after
@@ -63,16 +56,8 @@ class ezcMailPop3Set implements ezcMailParserSet
      * It is false if there is no mail being fetched currently or if all the
      * data of the current mail has been fetched.
      *
-     * @var bool
      */
-    private $hasMoreMailData = false;
-
-    /**
-     * Holds if mail should be deleted from the server after retrieval.
-     *
-     * @var bool
-     */
-    private $deleteFromServer = false;
+    private bool $hasMoreMailData = false;
 
     /**
      * Constructs a new POP3 parser set that will fetch the messages $messages.
@@ -85,15 +70,21 @@ class ezcMailPop3Set implements ezcMailParserSet
      *
      * @throws ezcMailTransportException
      *         if the server sent a negative response
-     * @param ezcMailTransportConnection $connection
      * @param array(ezcMail) $messages
      * @param bool $deleteFromServer
      */
-    public function __construct( ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false )
+    public function __construct( ezcMailTransportConnection $connection, /**
+     * Holds the list of messages that the user wants to retrieve from the server.
+     *
+     * @var array(int)
+     */
+    private array $messages, /**
+     * Holds if mail should be deleted from the server after retrieval.
+     *
+     */
+    private $deleteFromServer = false )
     {
         $this->connection = $connection;
-        $this->messages = $messages;
-        $this->deleteFromServer = $deleteFromServer;
     }
 
     /**
@@ -123,7 +114,7 @@ class ezcMailPop3Set implements ezcMailParserSet
         if ( $this->hasMoreMailData )
         {
             $data = $this->connection->getLine();
-            if ( rtrim( $data ) === "." )
+            if ( rtrim( (string) $data ) === "." )
             {
                 $this->hasMoreMailData = false;
                 // remove the mail if required by the user.
@@ -162,7 +153,7 @@ class ezcMailPop3Set implements ezcMailParserSet
         {
             $this->connection->sendData( "RETR {$this->currentMessage}" );
             $response = $this->connection->getLine();
-            if ( strpos( $response, "+OK" ) === 0 )
+            if ( str_starts_with((string) $response, "+OK") )
             {
                 $this->hasMoreMailData = true;
                 return true;

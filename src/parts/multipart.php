@@ -47,22 +47,21 @@ abstract class ezcMailMultipart extends ezcMailPart
     /**
      * Default message displayed to non-MIME capable email clients.
      */
-    const DEFAULT_NO_MIME_MESSAGE = "This message is in MIME format. Since your mail reader does not understand\r\nthis format, some or all of this message may not be legible.";
+    final public const DEFAULT_NO_MIME_MESSAGE = "This message is in MIME format. Since your mail reader does not understand\r\nthis format, some or all of this message may not be legible.";
 
     /**
      * An array holding the parts of this multipart.
      *
      * @var array(ezcMailPart)
      */
-    protected $parts = array();
+    protected $parts = [];
 
     /**
      * The counter is unique between all multipart types and is used to
      * generate unique boundary strings.
      *
-     * @var int
      */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     /**
      * Constructs a new ezcMailMultipart with the parts $parts.
@@ -80,7 +79,7 @@ abstract class ezcMailMultipart extends ezcMailPart
         parent::__construct();
 
         $this->noMimeMessage = self::DEFAULT_NO_MIME_MESSAGE;
-        $this->boundary = $this->generateBoundary();
+        $this->boundary = static::generateBoundary();
         $this->setHeader( "Content-Type", 'multipart/' . $this->multipartType() . '; '
                                            . 'boundary="' . $this->boundary . '"' );
         foreach ( $parts as $part )
@@ -142,17 +141,10 @@ abstract class ezcMailMultipart extends ezcMailPart
      */
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'boundary':
-            case 'noMimeMessage':
-                return $this->properties[$name];
-                break;
-
-            default:
-                return parent::__get( $name );
-                break;
-        }
+        return match ($name) {
+            'boundary', 'noMimeMessage' => $this->properties[$name],
+            default => parent::__get( $name ),
+        };
     }
 
     /**
@@ -164,15 +156,10 @@ abstract class ezcMailMultipart extends ezcMailPart
      */
     public function __isset( $name )
     {
-        switch ( $name )
-        {
-            case 'boundary':
-            case 'noMimeMessage':
-                return isset( $this->properties[$name] );
-
-            default:
-                return parent::__isset( $name );
-        }
+        return match ($name) {
+            'boundary', 'noMimeMessage' => isset( $this->properties[$name] ),
+            default => parent::__isset( $name ),
+        };
     }
 
     /**

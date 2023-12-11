@@ -77,10 +77,10 @@ class ezcMailSmtpTransportOptions extends ezcMailTransportOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->connectionType = ezcMailSmtpTransport::CONNECTION_PLAIN; // default is plain connection
-        $this->connectionOptions = array(); // default is no extra connection options
+        $this->connectionOptions = []; // default is no extra connection options
         $this->preferredAuthMethod = null; // default is to try the AUTH methods supported by the SMTP server
 
         parent::__construct( $options );
