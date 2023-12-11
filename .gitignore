@@ -2,3 +2,4 @@ vendor
 run-tests-tmp
 extract
 .idea
+composer.lock
